@@ -16,25 +16,38 @@ fn main() -> io::Result<()> {
     let reader = BufReader::new(file);
 
     let mut matches = Vec::new();
-    for line in reader.lines() {
-        let line = line?;
+    let mut lines_iter = reader.lines();
 
-        let c1 = &line[0..line.len() / 2];
-        let c2 = &line[line.len() / 2..line.len()];
+    loop {
+        let mut group_of_lines = Vec::new();
 
-        println!("1: {} 2: {}", c1, c2);
+        for _ in 0..3 {
+            if let Some(line) = lines_iter.next() {
+                group_of_lines.push(line?);
+            } else {
+                break;
+            }
+        }
 
-        let mut character = None;
-        for char1 in c1.chars() {
-            for char2 in c2.chars() {
-                match char1 == char2 {
-                    true => character = Some(char1),
-                    false => ()
+        if group_of_lines.is_empty() || group_of_lines.len() < 3 {
+            break;
+        }
+
+        let mut character: Option<char> = None;
+        for char1 in group_of_lines.get(0).unwrap().chars() {
+            for char2 in group_of_lines.get(1).unwrap().chars() {
+                for char3 in group_of_lines.get(2).unwrap().chars() {
+                    match char1 == char2 && char2 == char3 {
+                        true => character = Some(char1),
+                        false => ()
+                    }
                 }
             }
         }
 
         if character.is_some() {
+            println!("Line Group = {:#?}", group_of_lines);
+            println!("Matching Character = {}", character.unwrap());
             matches.push(character.unwrap());
         }
     }
@@ -44,10 +57,6 @@ fn main() -> io::Result<()> {
         total_sum += get_priority(*char);
     }
     println!("{}", total_sum);
-
-
-
-    // now to organize priority?
 
     Ok(())
 }
