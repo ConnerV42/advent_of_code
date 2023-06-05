@@ -38,8 +38,11 @@ fn main() -> io::Result<()> {
             for char2 in group_of_lines.get(1).unwrap().chars() {
                 for char3 in group_of_lines.get(2).unwrap().chars() {
                     match char1 == char2 && char2 == char3 {
-                        true => character = Some(char1),
-                        false => ()
+                        true => {
+                            character = Some(char1);
+                            break;
+                        }
+                        false => (),
                     }
                 }
             }
